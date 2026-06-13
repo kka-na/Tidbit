@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Tidbit">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#7b1e7a">
+<meta name="theme-color" content="#5c7228" id="themeColor">
 <link rel="apple-touch-icon" href="public/flowers/1.png">
 <link rel="manifest" href="manifest.json">
 <style>
@@ -221,8 +221,8 @@
 
 <script>
 const PAGES = {
-  garden:{key:'tidbit_garden', dir:'public/flowers', bg:'public/flowers/background.png', label:'꽃'},
-  tank:  {key:'tidbit_tank',   dir:'public/waterweeds', bg:'public/waterweeds/background.png', label:'수초'}
+  garden:{key:'tidbit_garden', dir:'public/flowers', bg:'public/flowers/background.png', label:'꽃', theme:'#5c7228'},
+  tank:  {key:'tidbit_tank',   dir:'public/waterweeds', bg:'public/waterweeds/background.png', label:'수초', theme:'#4f8fa3'}
 };
 const ITEM_COUNT = 30;
 let page='garden';
@@ -267,6 +267,10 @@ function switchPage(p){
   $('tabT').classList.toggle('on',p==='tank');
   $('bg').style.backgroundImage=`url('${PAGES[p].bg}')`;
   $('stage').classList.toggle('tank',p==='tank');
+  // 사파리 상·하단 막대 색을 사진 톤에 맞춤 (브라우저로 볼 때 검정 대신 자연스럽게)
+  $('themeColor').setAttribute('content', PAGES[p].theme);
+  document.documentElement.style.background = PAGES[p].theme;
+  document.body.style.background = PAGES[p].theme;
   editingId=null;
   loadItems();
 }
@@ -501,9 +505,9 @@ function delItem(id){
 }
 function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
-/* init */
+/* init — 내가 붕어면 붕어 어항, 송이면 송이 동산이 메인으로 */
 updateMeBtn();
-switchPage('garden');
+switchPage(me==='bung' ? 'tank' : 'garden');
 </script>
 </body>
 </html>
