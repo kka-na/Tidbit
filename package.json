@@ -1,0 +1,13 @@
+{
+  "name": "tidbit",
+  "version": "1.0.0",
+  "description": "둘이 심는 잡지식 정원 — 송이 동산 & 붕어 어항",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.19.2"
+  }
+}

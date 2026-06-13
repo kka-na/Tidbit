@@ -1,0 +1,12 @@
+{
+  "name": "Tidbit",
+  "short_name": "Tidbit",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#7b1e7a",
+  "icons": [
+    { "src": "public/flowers/1.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
