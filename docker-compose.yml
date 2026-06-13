@@ -4,7 +4,7 @@ services:
     container_name: tidbit
     restart: unless-stopped        # 재부팅·크래시 후 자동 재시작 → 백그라운드 상주
     ports:
-      - "3002:3000"                # 외부 3002 → 컨테이너 3000
+      - "2229:3000"                # 외부 2229 → 컨테이너 3000
     volumes:
       - ./data:/data               # DB(tidbit.db) 영구 보관 (컨테이너 지워도 유지)
     environment:
