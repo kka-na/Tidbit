@@ -245,6 +245,19 @@ async function loadItems(){
   render();
 }
 function isUnseen(it){const seen=it.seen||[it.author];return it.author!==me && !seen.includes(me);}
+// 내 플레이그라운드인지 (송이→동산, 붕어→어항)
+function isMyPage(){return (me==='songi'&&page==='garden')||(me==='bung'&&page==='tank');}
+function updateHint(){
+  const h=document.querySelector('.hintbar');
+  h.textContent = isMyPage()
+    ? '빈 곳 톡=심기 · 꾹=수정(옮기기·크기) · 톡=보기'
+    : `${page==='garden'?'송이 동산':'붕어 어항'} 구경 중 · 톡 하면 내용 보기`;
+}
+function flashVisitorHint(){
+  const h=document.querySelector('.hintbar');
+  h.textContent = `여기선 심을 수 없어요 · 내 ${me==='songi'?'동산':'어항'}에서 심어요`;
+  clearTimeout(h._t); h._t=setTimeout(updateHint,1700);
+}
 const BASE=84, MINS=0.2;
 function applySize(el,it){const s=it.scale||1;el.style.width=(BASE*s)+'px';el.style.height=(BASE*s)+'px';}
 let editingId=null;
@@ -272,6 +285,7 @@ function switchPage(p){
   document.documentElement.style.background = PAGES[p].theme;
   document.body.style.background = PAGES[p].theme;
   editingId=null;
+  updateHint();
   loadItems();
 }
 
@@ -279,6 +293,11 @@ function render(){
   const items=state;
   const c=$('canvas'); c.innerHTML='';
   $('empty').style.display = items.length? 'none':'flex';
+  if(!items.length){
+    $('empty').innerHTML = isMyPage()
+      ? '<div style="font-size:30px;">🌱</div><div>빈 곳을 톡 눌러 첫 잡지식을 심어보세요</div>'
+      : `<div style="font-size:30px;">🪴</div><div>${page==='garden'?'송이':'붕어'}가 아직 심은 게 없어요</div>`;
+  }
   items.forEach(it=>{
     const el=document.createElement('div');
     el.className='item';
@@ -306,6 +325,7 @@ $('scroller').addEventListener('click',e=>{
   if(e.target.closest('.item')) return;
   if(e.target.closest('.editctrl')) return;
   if(editingId!==null){ exitEdit(); return; }
+  if(!isMyPage()){ flashVisitorHint(); return; }   // 남의 정원엔 못 심음
   const rect=$('canvas').getBoundingClientRect();
   const x=e.clientX-rect.left, y=e.clientY-rect.top;
   showRing(x,y);
@@ -390,10 +410,11 @@ function attachDrag(el,it){
     dragging=true;moved=false;pid=e.pointerId;
     sx=e.clientX;sy=e.clientY;ox=it.x;oy=it.y;
     el.setPointerCapture(pid);
-    lpTimer=setTimeout(()=>{ enterEdit(it); },450);
+    if(isMyPage()) lpTimer=setTimeout(()=>{ enterEdit(it); },450);  // 내 페이지에서만 수정
   });
   el.addEventListener('pointermove',e=>{
     if(!dragging)return;
+    if(!isMyPage())return;        // 남의 정원에선 이동 불가(탭으로 보기만)
     const dx=e.clientX-sx, dy=e.clientY-sy;
     if(Math.abs(dx)>5||Math.abs(dy)>5){moved=true;clearTimeout(lpTimer);el.classList.add('dragging');}
     if(moved){
